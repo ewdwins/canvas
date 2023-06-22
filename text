@@ -1,0 +1,34 @@
+//get random
+function getRandom (min , max){
+    return Math.floor(Math.random()*(max - min) + min)
+}
+let r = 40
+let x = getRandom(0+r,window.innerWidth-r)
+let y = getRandom(0+r,window.innerHeight-r)
+
+let vx = (Math.random( - 0.5)) * 4
+let vy = (Math.random( - 0.5)) * 4
+
+
+function animate (){
+    c.clearRect(0,0,window.innerWidth,window.innerHeight)
+    c.beginPath() 
+    c.arc(x , y , r , 0 , 2 * Math.PI)
+    c.fillStyle = "white"
+    c.fill()
+    if(x+r > window.innerWidth || x - r < 0){
+        vx = -vx
+    }
+    if(y+r > window.innerHeight || y - r < 0){
+        vy = -vy
+    }
+
+    x += vx
+    y += vy
+    requestAnimationFrame(animate)  
+}
+
+
+animate()
+
+

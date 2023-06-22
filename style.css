@@ -1,4 +1,17 @@
-*{
-    margin: 0px;
-    box-sizing: border-box;
+
+body{   
+    margin: 0px;  
+    /* position: relative; */
 }
+canvas{
+    background-color:green;
+}
+/* #ball{
+    width: 40px;
+    height: 40px;
+    background-color: aquamarine;
+    border-radius: 50%;
+    position: fixed;
+    left: 10px;
+    top: 30px;
+} */
