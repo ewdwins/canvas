@@ -1,11 +1,6 @@
 import {getRandomColor ,getRandomNumberBytowNumber } from "./utils.js" 
 
-let canvas = document.querySelector("canvas")
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-
-let c = canvas.getContext("2d")
 
 //mostatil
 
@@ -81,83 +76,102 @@ let c = canvas.getContext("2d")
 // set Animation with js/canvas
 
 //get random
+let can = document.querySelector("canvas")
+
+can.width = window.innerWidth
+can.height = window.innerHeight
+
+let c = can.getContext("2d")
+
+
+
+window.screen = {
+    height : window.innerHeight,
+    width :  window.innerWidth
+}
+window.mouse = {
+    x : screen.width / 2 ,
+    y : screen.height / 2
+}
 
  
 class Ball{
-    constructor(x,y,color,rediuse=20){
-        this.baseR=10;
-        this.color=color;
-        this.r = rediuse;
+    constructor( x, y, dx , dy, r, color){
+        this.friction= 0.8;
+        this.gravity = 1 ;
+        this.r = r || 20;
         this.x = x || getRandomNumberBytowNumber(0+this.r,window.innerWidth-this.r);
         this.y = y || getRandomNumberBytowNumber(0+this.r,window.innerHeight-this.r);      
-        this.vx = (Math.random( - 0.5)) * 4;
-        this.vy = (Math.random( - 0.5)) * 4;
+        this.dx = dx || getRandomNumberBytowNumber(-10,10)//(Math.random( - 0.5)) * 10;
+        this.dy = dy || getRandomNumberBytowNumber(-10,10)//(Math.random(- 0.5)) * 4;
+        this.color = color || getRandomColor()
         this.draw();
     }
     draw(){
         c.beginPath()
-        c.fillStyle = getRandomColor() 
         c.arc(this.x , this.y , this.r , 0 , 2 * Math.PI)
         c.fillStyle = this.color
         c.fill()
         
     }
     update(){
-        if(this.x+this.r > window.innerWidth || this.x - this.r < 0){
-            this.vx = -this.vx
+       
+        
+        if(this.y + this.r + this.dy >= screen.height){
+            
+            this.dy = - this.dy * this.friction
+            this.dx = - this.dx * this.friction
         }
-        if(this.y+this.r > window.innerHeight || this.y - this.r < 0){
-           this.vy = -this.vy
+        else{
+           this.dy += this.gravity
         }
-    
-    
-        this.x +=this.vx;
-        this.y +=this.vy;
+        if(this.x + this.r + this.dx >= screen.width ||this.x - this.r + this.dx == 0){
+            this.dx = -this.dx
+        
+        }
+        this.y += this.dy
+        this.x += this.dx
+        
+        
         this.draw()
     }
 }
-let balls = []
-for(let i = 0 ; i < 4 ; i++){
-    const listColor = getRandomColor()
-    const listRediuse =[20 , 30 , 40 ,100]
-    balls.push(new Ball(20,30,listColor))
+class canvas {
+    constructor(){
+    this.balls = []
+    for(let i = 0 ; i < 30; i++){
+        this.balls.push(new Ball())
+     }
+    }
+    animate(){
+    
+        c.clearRect(0,0,window.innerWidth,window.innerHeight)
+        this.balls.forEach(ball =>{
+            ball.update()
+        });
+        requestAnimationFrame(this.animate.bind(this));
+    }
 }
 
-function animate(){
-    c.clearRect(0,0,window.innerWidth,window.innerHeight)
-    balls.forEach(ball =>{
-        ball.update()
-        
-    });
-    requestAnimationFrame(animate);
-}
+let mycan = new canvas();
+mycan.animate();
+
 
 
 
 window.addEventListener("click" , (e)=>{
-    balls.push(new Ball(e.clientX,e.clientY,getRandomColor(),getRandomNumberBytowNumber(0,30)))
+    mycan.balls.push(new Ball(e.clientX,e.clientY,))
 })
 
 
-window.addEventListener("mousemove",(e)=>{
-    balls.forEach(ball=>{
-        let distance = Math.sqrt(Math.pow(e.clientX - ball.x ,2) + Math.pow(e.clientY - ball.y ,2))
-        if(distance < 100 && ball.r < ball.baseR * 4){
-            ball.r += 1
-            
-        }
-        else if (ball.r > ball.baseR){
-            ball.r -= 1
-        }
-        }) 
-})
-
+// window.addEventListener("mousemove",(e)=>{
+//     mycan.balls.forEach(ball=>{
+//         mouse.x = e.clientX ;
+//         mouse.y = e.clientY ;
+//     })
+// })
 
 window.addEventListener("resize",(e)=>{
-    canvas.width = innerWidth
-    canvas.height = innerHeight
+    can.width = innerWidth
+    can.height = innerHeight
 })
-
-  
-
-animate();
